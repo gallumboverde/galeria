@@ -140,9 +140,10 @@ h1 {
     </select>
   </div>
 
- <div id="loading" style="text-align:center; font-size:1rem; margin-bottom:1rem;">
-  Cargando playlists
+<div id="loading" style="text-align:center; font-size:1rem; margin-bottom:1rem; color:#000;">
+  Cargando playlists<span id="dots">.</span>
 </div>
+
   
   <div class="galeria" id="galeria"></div>
 
@@ -234,12 +235,13 @@ clearInterval(loadingInterval);
 
 
     // Animación de puntos suspensivos
-let dotCount = 0;
+let dotCount = 1;
 const dotsEl = document.getElementById("dots");
 const loadingInterval = setInterval(() => {
   dotCount = (dotCount + 1) % 4;
-  dotsEl.textContent = ".".repeat(dotCount);
+  dotsEl.textContent = ".".repeat(dotCount || 1);
 }, 500);
+
 
   </script>
 </body>
