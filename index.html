@@ -230,17 +230,20 @@ h1 {
       renderizarGaleria(filtrados);
     }
 
-    document.getElementById("loading").style.display = "none";
-clearInterval(loadingInterval);
 
-
-    // Animación de puntos suspensivos
 let dotCount = 1;
 const dotsEl = document.getElementById("dots");
 const loadingInterval = setInterval(() => {
   dotCount = (dotCount + 1) % 4;
   dotsEl.textContent = ".".repeat(dotCount || 1);
 }, 500);
+
+    
+    document.getElementById("loading").style.display = "none";
+clearInterval(loadingInterval);
+
+
+
 
 
   </script>
