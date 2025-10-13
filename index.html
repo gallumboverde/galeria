@@ -5,40 +5,61 @@
   <title>Galería Nefli</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #111;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
       color: #fff;
       margin: 0;
       padding: 2rem;
     }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: #1db954;
+    }
+
     .galeria {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
+      padding: 0 1rem;
     }
+
     .card {
-      background: #1c1c1c;
+      background-color: #1c1c1c;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
       transition: transform 0.2s ease;
     }
+
     .card:hover {
       transform: scale(1.03);
     }
+
     .card img {
       width: 100%;
+      height: auto;
       display: block;
     }
+
     .card h2 {
       font-size: 1rem;
       margin: 0.5rem;
+      color: #fff;
     }
+
     .card a {
       display: block;
       margin: 0.5rem;
       color: #1db954;
       text-decoration: none;
+      font-weight: bold;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -46,29 +67,26 @@
   <h1>🎬 Galería de Listas de Reproducción</h1>
   <div class="galeria" id="galeria"></div>
 
- <script>
-  fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjNNurMqmr2TYfdPbTVGf508L_P_LnRirXmaKJDZd6Z_Xhj7LDv8DrwBFqkE-1TIGv93HBfw_pm0VFbOHNmb0-NvPeS62VCQgAsI7hRSRHvgrFTwZvYZWaeXG6HbrXcgeBcGUrZpeyuwef2EVTWDEN_MzYopzLyW_bQiQDLM15Is1cJkbZgQ_UZjfz8ubGldOKGeg1mjoXr622wd72gTETH7NJHRob29cGDV9pQO76dyEaTn9geokL3c5im8MwLMZjQcMNBvWZE0QYc4cxqDPZJVHKcXg&lib=MCWe42NHbQqOrLIPOqVQuyM683hYefgmI")
-
-    .then(res => res.json())
-    .then(data => {
-      const contenedor = document.getElementById("galeria");
-      data.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="${item.miniatura}" alt="${item.titulo}">
-          <h2>${item.titulo}</h2>
-          <a href="${item.playlist}" target="_blank">Ver playlist</a>
-        `;
-        contenedor.appendChild(card);
+  <script>
+    fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjNNurMqmr2TYfdPbTVGf508L_P_LnRirXmaKJDZd6Z_Xhj7LDv8DrwBFqkE-1TIGv93HBfw_pm0VFbOHNmb0-NvPeS62VCQgAsI7hRSRHvgrFTwZvYZWaeXG6HbrXcgeBcGUrZpeyuwef2EVTWDEN_MzYopzLyW_bQiQDLM15Is1cJkbZgQ_UZjfz8ubGldOKGeg1mjoXr622wd72gTETH7NJHRob29cGDV9pQO76dyEaTn9geokL3c5im8MwLMZjQcMNBvWZE0QYc4cxqDPZJVHKcXg&lib=MCWe42NHbQqOrLIPOqVQuyM683hYefgmI")
+      .then(res => res.json())
+      .then(data => {
+        const contenedor = document.getElementById("galeria");
+        data.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <img src="${item.miniatura}" alt="${item.titulo}">
+            <h2>${item.titulo}</h2>
+            <a href="${item.enlace}" target="_blank">Ver playlist</a>
+          `;
+          contenedor.appendChild(card);
+        });
+      })
+      .catch(err => {
+        console.error("Error al conectar con el script:", err);
+        document.getElementById("galeria").innerText = "No se pudo cargar la galería.";
       });
-    })
-    .catch(err => {
-      console.error("Error al conectar con el script:", err);
-      document.getElementById("galeria").innerText = "No se pudo cargar la galería.";
-    });
-</script>
-
-
+  </script>
 </body>
 </html>
