@@ -46,26 +46,28 @@
   <h1>🎬 Galería de Listas de Reproducción</h1>
   <div class="galeria" id="galeria"></div>
 
-  <script>
-    fetch("https://script.google.com/macros/s/AKfycbwxdGiHQVe3UEIL_Bf6SSZ3emG7mRef3d8IKxBs9YyMLAmZdmeVmyqqi2qoHA2Pn9NJ/exec")
-      .then(res => res.json())
-      .then(data => {
-        const contenedor = document.getElementById("galeria");
-        data.forEach(item => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `
-            <img src="${item.miniatura}" alt="${item.titulo}">
-            <h2>${item.titulo}</h2>
-            <a href="${item.playlist}" target="_blank">Ver playlist</a>
-          `;
-          contenedor.appendChild(card);
-        });
-      })
-      .catch(err => {
-        document.getElementById("galeria").innerText = "No se pudo cargar la galería.";
-        console.error("Error al cargar datos:", err);
+ <script>
+  fetch("https://script.google.com/macros/s/AKfycbwxdGiHQVe3UEIL_Bf6SSZ3emG7mRef3d8IKxBs9YyMLAmZdmeVmyqqi2qoHA2Pn9NJ/exec")
+    .then(res => res.json())
+    .then(data => {
+      const contenedor = document.getElementById("galeria");
+      data.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${item.miniatura}" alt="${item.titulo}">
+          <h2>${item.titulo}</h2>
+          <a href="${item.playlist}" target="_blank">Ver playlist</a>
+        `;
+        contenedor.appendChild(card);
       });
-  </script>
+    })
+    .catch(err => {
+      console.error("Error al conectar con el script:", err);
+      document.getElementById("galeria").innerText = "No se pudo cargar la galería.";
+    });
+</script>
+
+
 </body>
 </html>
