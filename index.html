@@ -2,30 +2,54 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Galería Nefli</title>
+  <title>Playlists de Gallumbo Verde</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #111;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f0f;
       color: #fff;
       margin: 0;
       padding: 2rem;
     }
 
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #1db954;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .controls input,
+    .controls select {
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: none;
+      font-size: 1rem;
+    }
+
     .galeria {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 0 1rem;
     }
 
     .card {
-      background: #1c1c1c;
-      border-radius: 8px;
+      position: relative;
+      border: 2px solid #fff;
+      border-radius: 6px;
       overflow: hidden;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      transition: transform 0.2s ease;
       text-decoration: none;
       color: inherit;
+      transition: transform 0.2s ease;
       display: block;
     }
 
@@ -35,40 +59,109 @@
 
     .card img {
       width: 100%;
+      height: auto;
       display: block;
     }
 
     .card h2 {
-      font-size: 1rem;
-      margin: 0.5rem;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>🎬 Galería de Listas de Reproducción</h1>
+  <h1>Playlists de Gallumbo Verde</h1>
+
+  <div class="controls">
+    <input type="text" id="buscador" placeholder="Buscar por nombre...">
+    <select id="categorias"></select>
+    <select id="orden">
+      <option value="reciente">Más recientes</option>
+      <option value="antiguo">Más antiguos</option>
+      <option value="az">A-Z</option>
+      <option value="za">Z-A</option>
+    </select>
+  </div>
+
   <div class="galeria" id="galeria"></div>
 
   <script>
-    fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiau3JY_ONq497ybNpoMBr3dkF6YjsMRdQkoKbDoPxyvFqSU3xV2uAxma2uwVq4DdOpa0iF_utMkoVIOkIPFk7CU7ZelUldhxtybazMtt6kpv1gQ20flyLTDt2MaZSr6BzBb5HK-m_Zqe90kEaOfH5xJDmq3WuEyXs7EN02QCaONE6HAndk55938tNKWEmIQwfVX3eMTkBONVDRR-1ozQCi38KYlnG1syDK7MItLQRqqcxOl6US_WyJsIrfNp4XQWlT255TUFltjY8Ym12tPacKjskNcA&lib=MCWe42NHbQqOrLIPOqVQuyM683hYefgmI")
+    let datosOriginales = [];
+
+    fetch("https://script.google.com/macros/s/AKfycbzRxC597EdqK9TB24gMkdAPmliWpB2S5C-wOkcUnGSoVGbQJmlXC2j5XpAZ7De2ad-k/exec")
       .then(res => res.json())
       .then(data => {
-        const contenedor = document.getElementById("galeria");
-        data.forEach(item => {
-          const card = document.createElement("a");
-          card.className = "card";
-          card.href = item.enlace;
-          card.target = "_blank";
-          card.innerHTML = `
-            <img src="${item.miniatura}" alt="${item.titulo}">
-            <h2>${item.titulo}</h2>
-          `;
-          contenedor.appendChild(card);
-        });
-      })
-      .catch(err => {
-        console.error("Error al conectar con el script:", err);
-        document.getElementById("galeria").innerText = "No se pudo cargar la galería.";
+        datosOriginales = data;
+        renderizarGaleria(data);
+        cargarCategorias(data);
       });
+
+    function renderizarGaleria(data) {
+      const contenedor = document.getElementById("galeria");
+      contenedor.innerHTML = "";
+      data.forEach(item => {
+        const card = document.createElement("a");
+        card.className = "card";
+        card.href = item.enlace;
+        card.target = "_blank";
+        card.innerHTML = `
+          <img src="${item.miniatura}" alt="${item.titulo}">
+          <h2>${item.titulo}</h2>
+        `;
+        contenedor.appendChild(card);
+      });
+    }
+
+    function cargarCategorias(data) {
+      const select = document.getElementById("categorias");
+      const conteo = {};
+      data.forEach(item => {
+        conteo[item.categoria] = (conteo[item.categoria] || 0) + 1;
+      });
+
+      const ordenadas = Object.entries(conteo)
+        .sort((a, b) => b[1] - a[1]);
+
+      select.innerHTML = `<option value="">Todas las categorías</option>`;
+      ordenadas.forEach(([cat, count]) => {
+        select.innerHTML += `<option value="${cat}">${cat} (${count})</option>`;
+      });
+    }
+
+    document.getElementById("buscador").addEventListener("input", filtrar);
+    document.getElementById("categorias").addEventListener("change", filtrar);
+    document.getElementById("orden").addEventListener("change", filtrar);
+
+    function filtrar() {
+      const texto = document.getElementById("buscador").value.toLowerCase();
+      const categoria = document.getElementById("categorias").value;
+      const orden = document.getElementById("orden").value;
+
+      let filtrados = datosOriginales.filter(item =>
+        item.titulo.toLowerCase().includes(texto) &&
+        (categoria === "" || item.categoria === categoria)
+      );
+
+      if (orden === "reciente") {
+        filtrados.sort((a, b) => new Date(b.fechaISO) - new Date(a.fechaISO));
+      } else if (orden === "antiguo") {
+        filtrados.sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
+      } else if (orden === "az") {
+        filtrados.sort((a, b) => a.titulo.localeCompare(b.titulo));
+      } else if (orden === "za") {
+        filtrados.sort((a, b) => b.titulo.localeCompare(a.titulo));
+      }
+
+      renderizarGaleria(filtrados);
+    }
   </script>
 </body>
 </html>
