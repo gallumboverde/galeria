@@ -121,21 +121,32 @@ h1 {
         cargarCategorias(data);
       });
 
-    function renderizarGaleria(data) {
-      const contenedor = document.getElementById("galeria");
-      contenedor.innerHTML = "";
-      data.forEach(item => {
-        const card = document.createElement("a");
-        card.className = "card";
-        card.href = item.enlace;
-        card.target = "_blank";
-        card.innerHTML = `
-          <img src="${item.miniatura}" alt="${item.titulo}">
-          <h2>${item.titulo}</h2>
-        `;
-        contenedor.appendChild(card);
-      });
-    }
+   function renderizarGaleria(data) {
+  const contenedor = document.getElementById("galeria");
+  contenedor.innerHTML = "";
+
+  data.forEach(item => {
+    const card = document.createElement("a");
+    card.className = "card";
+    card.href = item.enlace;
+    card.target = "_blank";
+    card.innerHTML = `
+      <img src="${item.miniatura}" alt="${item.titulo}">
+      <h2>${item.titulo}</h2>
+    `;
+
+    // 🔧 Forzar reflujo antes de aplicar animación
+    card.style.opacity = "0";
+    card.style.transform = "scale(0.95)";
+    contenedor.appendChild(card);
+    requestAnimationFrame(() => {
+      card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+      card.style.opacity = "1";
+      card.style.transform = "scale(1)";
+    });
+  });
+}
+
 
     function cargarCategorias(data) {
       const select = document.getElementById("categorias");
