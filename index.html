@@ -203,27 +203,29 @@ h1 {
     
 
     function filtrar() {
-      const texto = document.getElementById("buscador").value.toLowerCase();
-      const categoria = document.getElementById("categorias").value;
-      const orden = document.getElementById("orden").value;
+  const texto = document.getElementById("buscador").value.toLowerCase().trim();
+  const orden = document.getElementById("orden").value;
 
-      let filtrados = datosOriginales.filter(item =>
-        item.titulo.toLowerCase().includes(texto) &&
-        (categoria === "" || item.categoria === categoria)
-      );
+  // Filtrado por texto en el campo 'titulo'
+  let filtrados = datosOriginales.filter(item =>
+    item.titulo && item.titulo.toLowerCase().includes(texto)
+  );
 
-      if (orden === "reciente") {
-        filtrados.sort((a, b) => new Date(b.fechaISO) - new Date(a.fechaISO));
-      } else if (orden === "antiguo") {
-        filtrados.sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
-      } else if (orden === "az") {
-        filtrados.sort((a, b) => a.tituloOrden.localeCompare(b.tituloOrden));
-      } else if (orden === "za") {
-        filtrados.sort((a, b) => b.tituloOrden.localeCompare(a.tituloOrden));
-      }
+  // Ordenamiento por 'tituloOrden'
+  if (orden === "az") {
+    filtrados.sort((a, b) =>
+      (a.tituloOrden || "").trim().localeCompare((b.tituloOrden || "").trim())
+    );
+  } else if (orden === "za") {
+    filtrados.sort((a, b) =>
+      (b.tituloOrden || "").trim().localeCompare((a.tituloOrden || "").trim())
+    );
+  }
 
-      renderizarGaleria(filtrados);
-    }
+  // Renderizar resultados
+  renderizarGaleria(filtrados);
+}
+
   </script>
 </body>
 </html>
