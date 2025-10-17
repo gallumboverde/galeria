@@ -150,6 +150,8 @@ h1 {
         datosOriginales = data;
         renderizarGaleria(data);
         cargarCategorias(data);
+        filtrar();
+
         document.getElementById("loading").style.display = "none";
 
       });
@@ -181,21 +183,33 @@ h1 {
 }
 
 
-    function cargarCategorias(data) {
-      const select = document.getElementById("categorias");
-      const conteo = {};
-      data.forEach(item => {
-        conteo[item.categoria] = (conteo[item.categoria] || 0) + 1;
-      });
+   function cargarCategorias(data) {
+  const select = document.getElementById("categorias");
+  const conteo = {};
 
-      const ordenadas = Object.entries(conteo)
-        .sort((a, b) => b[1] - a[1]);
-
-      select.innerHTML = `<option value="">Todas las categorías</option>`;
-      ordenadas.forEach(([cat, count]) => {
-        select.innerHTML += `<option value="${cat}">${cat} (${count})</option>`;
-      });
+  // Contar cuántas veces aparece cada categoría
+  data.forEach(item => {
+    if (item.categoria) {
+      conteo[item.categoria] = (conteo[item.categoria] || 0) + 1;
     }
+  });
+
+  // Ordenar categorías por frecuencia
+  const ordenadas = Object.entries(conteo)
+    .sort((a, b) => b[1] - a[1]);
+
+  // Generar opciones
+  select.innerHTML = "";
+  ordenadas.forEach(([cat, count]) => {
+    select.innerHTML += `<option value="${cat}">${cat} (${count})</option>`;
+  });
+
+  // Seleccionar automáticamente la más frecuente
+  if (ordenadas.length > 0) {
+    select.value = ordenadas[0][0];
+  }
+}
+
 
     document.getElementById("buscador").addEventListener("input", filtrar);
     document.getElementById("categorias").addEventListener("change", filtrar);
