@@ -217,9 +217,9 @@ h1 {
       } else if (orden === "antiguo") {
         filtrados.sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
       } else if (orden === "az") {
-        filtrados.sort((a, b) => a.tituloorden.localeCompare(b.tituloorden));
+        filtrados.sort((a, b) => a.tituloOrden.localeCompare(b.tituloOrden));
       } else if (orden === "za") {
-        filtrados.sort((a, b) => b.tituloorden.localeCompare(a.tituloorden));
+        filtrados.sort((a, b) => b.tituloOrden.localeCompare(a.tituloOrden));
       }
 
       renderizarGaleria(filtrados);
