@@ -204,24 +204,22 @@ h1 {
 
 function filtrar() {
   const texto = document.getElementById("buscador").value.toLowerCase().trim();
+  const categoria = document.getElementById("categorias").value;
   const orden = document.getElementById("orden").value;
 
-  // Paso 1: filtrar por texto en 'titulo'
-  let filtrados = datosOriginales.filter(item =>
-    item.titulo &&
-    item.titulo.toLowerCase().includes(texto)
-  );
-
-  console.log("Filtrados:", filtrados.map(i => i.tituloOrden));
+  // Paso 1: filtrar por texto y categoría
+  let filtrados = datosOriginales.filter(item => {
+    const coincideTexto = item.titulo && item.titulo.toLowerCase().includes(texto);
+    const coincideCategoria = !categoria || item.categoria === categoria;
+    return coincideTexto && coincideCategoria;
+  });
 
   // Paso 2: ordenar por 'tituloOrden' si aplica
   if (orden === "az") {
-    console.log("Ordenando A-Z");
     filtrados.sort((a, b) =>
       (a.tituloOrden || "").toLowerCase().trim().localeCompare((b.tituloOrden || "").toLowerCase().trim())
     );
   } else if (orden === "za") {
-    console.log("Ordenando Z-A");
     filtrados.sort((a, b) =>
       (b.tituloOrden || "").toLowerCase().trim().localeCompare((a.tituloOrden || "").toLowerCase().trim())
     );
@@ -230,6 +228,7 @@ function filtrar() {
   // Paso 3: renderizar
   renderizarGaleria(filtrados);
 }
+
 
 
 
