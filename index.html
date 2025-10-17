@@ -207,7 +207,7 @@ h1 {
       const orden = document.getElementById("orden").value;
 
       let filtrados = datosOriginales.filter(item =>
-        item.tituloorden.toLowerCase().includes(texto) &&
+        item.titulo.toLowerCase().includes(texto) &&
         (categoria === "" || item.categoria === categoria)
       );
 
@@ -216,9 +216,9 @@ h1 {
       } else if (orden === "antiguo") {
         filtrados.sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
       } else if (orden === "az") {
-        filtrados.sort((a, b) => a.titulo.localeCompare(b.titulo));
+        filtrados.sort((a, b) => a.tituloorden.localeCompare(b.tituloorden));
       } else if (orden === "za") {
-        filtrados.sort((a, b) => b.titulo.localeCompare(a.titulo));
+        filtrados.sort((a, b) => b.tituloorden.localeCompare(a.tituloorden));
       }
 
       renderizarGaleria(filtrados);
