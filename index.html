@@ -207,14 +207,12 @@ function filtrar() {
   const categoria = document.getElementById("categorias").value;
   const orden = document.getElementById("orden").value;
 
-  // Paso 1: filtrar por texto y categoría
   let filtrados = datosOriginales.filter(item => {
     const coincideTexto = item.titulo && item.titulo.toLowerCase().includes(texto);
-    const coincideCategoria = !categoria || item.categoria === categoria;
+    const coincideCategoria = categoria === "" || item.categoria === categoria;
     return coincideTexto && coincideCategoria;
   });
 
-  // Paso 2: ordenar según el tipo de orden seleccionado
   if (orden === "az") {
     filtrados.sort((a, b) =>
       (a.tituloOrden || "").toLowerCase().trim().localeCompare((b.tituloOrden || "").toLowerCase().trim())
@@ -224,18 +222,14 @@ function filtrar() {
       (b.tituloOrden || "").toLowerCase().trim().localeCompare((a.tituloOrden || "").toLowerCase().trim())
     );
   } else if (orden === "reciente") {
-    filtrados.sort((a, b) =>
-      new Date(b.fechaISO) - new Date(a.fechaISO)
-    );
+    filtrados.sort((a, b) => new Date(b.fechaISO) - new Date(a.fechaISO));
   } else if (orden === "antiguo") {
-    filtrados.sort((a, b) =>
-      new Date(a.fechaISO) - new Date(b.fechaISO)
-    );
+    filtrados.sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
   }
 
-  // Paso 3: renderizar
   renderizarGaleria(filtrados);
 }
+
 
 
 
