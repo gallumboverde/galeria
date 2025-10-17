@@ -198,7 +198,7 @@ h1 {
   const ordenadas = Object.entries(conteo)
     .sort((a, b) => b[1] - a[1]);
 
-  // Generar opciones
+  // Generar opciones (sin "Todas las categorías")
   select.innerHTML = "";
   ordenadas.forEach(([cat, count]) => {
     select.innerHTML += `<option value="${cat}">${cat} (${count})</option>`;
@@ -208,7 +208,11 @@ h1 {
   if (ordenadas.length > 0) {
     select.value = ordenadas[0][0];
   }
+
+  // Aplicar filtrado inicial
+  filtrar();
 }
+
 
 
     document.getElementById("buscador").addEventListener("input", filtrar);
