@@ -51,18 +51,14 @@ h1 {
 }
 
 .card {
-  position: relative;
-  border: none;
-  border-radius: 8px;
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-  display: inline-block;
-  aspect-ratio: 16 / 9;
-  background-color: #000;
-  opacity: 0;
-  transform: scale(0.95);
-  animation: fadeIn 0.3s ease forwards;
+  position: absolute;
+    bottom: 10px;
+    left: 10px;
+    padding: 6px 12px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 6px;
+    display: inline-block;
+    max-width: calc(100% - 20px);
 }
 
 @keyframes fadeIn {
