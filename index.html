@@ -173,26 +173,35 @@ card.style.transform = "scale(1)";
 
 
 function cargarCategorias(data) {
-const select = document.getElementById("categorias");
-const conteo = {};
+    const select = document.getElementById("categorias");
+    const conteo = {};
 
-data.forEach(item => {
-if (item.categoria) {
-conteo[item.categoria] = (conteo[item.categoria] || 0) + 1;
-}
-});
+    data.forEach(item => {
+        if (item.categoria) {
+            conteo[item.categoria] = (conteo[item.categoria] || 0) + 1;
+        }
+    });
 
-const ordenadas = Object.entries(conteo)
-.sort((a, b) => b[1] - a[1]);
+    const ordenadas = Object.entries(conteo).sort((a, b) => b[1] - a[1]);
 
-select.innerHTML = "";
-ordenadas.forEach(([cat, count]) => {
-select.innerHTML += `<option value="${cat}">${cat} (${count})</option>`;
-});
+    select.innerHTML = "";
+    ordenadas.forEach(([cat, count]) => {
+        // Función para limpiar: quita emojis/símbolos, espacios y lo pasa a minúsculas
+        const valorLimpio = cat
+            .replace(/[^\w\sáéíóúÁÉÍÓÚñÑ-]/g, '') // Quita emojis y caracteres raros
+            .trim()                               // Quita espacios sobrantes al inicio/final
+            .toLowerCase()                        // Todo a minúsculas
+            .replace(/\s+/g, '-');                // Cambia espacios intermedios por guiones
 
-if (ordenadas.length > 0) {
-select.value = ordenadas[0][0];
-}
+        // Guardamos el valor limpio en 'value' (para el #) y el texto bonito con emoji dentro del <option>
+        select.innerHTML += `<option value="${valorLimpio}" data-original="${cat}">${cat} (${count})</option>`;
+    });
+
+    if (ordenadas.length > 0) {
+        select.value = select.options[0].value;
+    }
+
+    filtrar();
 }
 
 // 🌐 Función para leer la URL y aplicar la categoría del #
@@ -230,10 +239,15 @@ const texto = document.getElementById("buscador").value.toLowerCase().trim();
 const categoria = document.getElementById("categorias").value;
 const orden = document.getElementById("orden").value;
 
+// Buscamos cuál es el nombre original de la categoría seleccionada
+const opcionSeleccionada = document.getElementById("categorias").selectedOptions[0];
+const categoriaOriginal = opcionSeleccionada ? opcionSeleccionada.getAttribute("data-original") : "";
+
 let filtrados = datosOriginales.filter(item => {
-const coincideTexto = item.titulo && item.titulo.toLowerCase().includes(texto);
-const coincideCategoria = categoria === "" || item.categoria === categoria;
-return coincideTexto && coincideCategoria;
+    const coincideTexto = item.titulo && item.titulo.toLowerCase().includes(texto);
+    // Ahora comparamos contra la categoría original guardada en el atributo data-original
+    const coincideCategoria = categoriaOriginal === "" || item.categoria === categoriaOriginal;
+    return coincideTexto && coincideCategoria;
 });
 
 if (orden === "az") {
