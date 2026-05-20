@@ -77,6 +77,11 @@ width: 100%;
 height: 100%;
 object-fit: cover;
 display: block;
+transition: transform 0.3s ease;
+}
+
+.card:hover img {
+transform: scale(1.05);
 }
 
 .card h2 {
@@ -103,20 +108,6 @@ animation: dots 1.5s steps(3, end) infinite;
 66% { content: '..'; }
 100% { content: '...'; }
 }
-
-.card img {
-width: 100%;
-height: 100%;
-object-fit: cover;
-display: block;
-transition: transform 0.3s ease;
-}
-
-.card:hover img {
-transform: scale(1.05);
-}
-
-
 </style>
 </head>
 <body>
@@ -148,12 +139,11 @@ fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLi
 .then(res => res.json())
 .then(data => {
 datosOriginales = data;
-renderizarGaleria(data);
-cargarCategorias(data);
+cargarCategorias(data); // Primero cargamos categorías para poder seleccionar la correcta del hash
+aplicarFiltroPorHash(); // Comprobamos si la URL viene con un enlace directo (#)
 filtrar();
 
 document.getElementById("loading").style.display = "none";
-
 });
 
 function renderizarGaleria(data) {
@@ -170,7 +160,6 @@ card.innerHTML = `
      <h2>${item.titulo}</h2>
    `;
 
-// 🔧 Forzar reflujo antes de aplicar animación
 card.style.opacity = "0";
 card.style.transform = "scale(0.95)";
 contenedor.appendChild(card);
@@ -187,37 +176,53 @@ function cargarCategorias(data) {
 const select = document.getElementById("categorias");
 const conteo = {};
 
-// Contar cuántas veces aparece cada categoría
 data.forEach(item => {
 if (item.categoria) {
 conteo[item.categoria] = (conteo[item.categoria] || 0) + 1;
 }
 });
 
-// Ordenar categorías por frecuencia
 const ordenadas = Object.entries(conteo)
 .sort((a, b) => b[1] - a[1]);
 
-// Generar opciones (sin "Todas las categorías")
 select.innerHTML = "";
 ordenadas.forEach(([cat, count]) => {
 select.innerHTML += `<option value="${cat}">${cat} (${count})</option>`;
 });
 
-// Seleccionar automáticamente la más frecuente
 if (ordenadas.length > 0) {
 select.value = ordenadas[0][0];
 }
-
-// Aplicar filtrado inicial
-filtrar();
 }
 
+// 🌐 Función para leer la URL y aplicar la categoría del #
+function aplicarFiltroPorHash() {
+const hash = decodeURIComponent(window.location.hash.substring(1)); // decodeURIComponent evita problemas con espacios o tildes
+const select = document.getElementById("categorias");
 
+if (hash) {
+// Comprobamos si el hash existe entre las opciones del select
+const opciones = Array.from(select.options).map(opt => opt.value);
+if (opciones.includes(hash)) {
+select.value = hash;
+}
+}
+}
 
 document.getElementById("buscador").addEventListener("input", filtrar);
-document.getElementById("categorias").addEventListener("change", filtrar);
+document.getElementById("categorias").addEventListener("change", () => {
+// Al cambiar manualmente, actualizamos el # en la URL de forma limpia sin recargar
+const select = document.getElementById("categorias");
+window.location.hash = encodeURIComponent(select.value);
+filtrar();
+});
 document.getElementById("orden").addEventListener("change", filtrar);
+
+// 🔄 Opcional: Si el usuario usa las flechas de atrás/adelante del navegador, la web se actualiza sola
+window.addEventListener('hashchange', () => {
+aplicarFiltroPorHash();
+filtrar();
+});
 
 
 function filtrar() {
@@ -247,12 +252,6 @@ filtrados.sort((a, b) => new Date(a.fechaISO) - new Date(b.fechaISO));
 
 renderizarGaleria(filtrados);
 }
-
-
-
-
-
-
 </script>
 </body>
 </html>
