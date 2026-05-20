@@ -204,26 +204,42 @@ function cargarCategorias(data) {
     filtrar();
 }
 
-// 🌐 Función para leer la URL y aplicar la categoría del #
+// 🌐 Lee la URL (acepta tanto ?cat= como #) y pone el desplegable en su sitio
 function aplicarFiltroPorHash() {
-const hash = decodeURIComponent(window.location.hash.substring(1)); // decodeURIComponent evita problemas con espacios o tildes
-const select = document.getElementById("categorias");
+    const select = document.getElementById("categorias");
+    const opciones = Array.from(select.options).map(opt => opt.value);
+    let valorEncontrado = "";
 
-if (hash) {
-// Comprobamos si el hash existe entre las opciones del select
-const opciones = Array.from(select.options).map(opt => opt.value);
-if (opciones.includes(hash)) {
-select.value = hash;
-}
-}
+    // 1. Intentar leer parámetro ?cat= (Ideal para Google Sites)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramCat = urlParams.get('cat');
+    
+    if (paramCat) {
+        valorEncontrado = decodeURIComponent(paramCat);
+    } 
+    // 2. Si no hay parámetro, intentar leer el # como antes
+    else if (window.location.hash) {
+        valorEncontrado = decodeURIComponent(window.location.hash.substring(1));
+    }
+
+    // Si lo que encuentra coincide con una categoría real, la selecciona
+    if (valorEncontrado && opciones.includes(valorEncontrado)) {
+        select.value = valorEncontrado;
+    }
 }
 
 document.getElementById("buscador").addEventListener("input", filtrar);
-document.getElementById("categorias").addEventListener("change", () => {
-// Al cambiar manualmente, actualizamos el # en la URL de forma limpia sin recargar
-const select = document.getElementById("categorias");
-window.location.hash = encodeURIComponent(select.value);
-filtrar();
+document.getElementById("categorias").addEventListener("change", (e) => {
+    const valor = e.target.value;
+    
+    // Actualiza el #
+    window.location.hash = encodeURIComponent(valor);
+    
+    // Actualiza el ?cat= en el historial (sin recargar la caja)
+    const nuevaURL = window.location.pathname + '?cat=' + encodeURIComponent(valor) + window.location.hash;
+    window.history.pushState({ path: nuevaURL }, '', nuevaURL);
+    
+    filtrar();
 });
 document.getElementById("orden").addEventListener("change", filtrar);
 
