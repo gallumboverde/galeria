@@ -136,7 +136,10 @@ Cargando playlists
 let datosOriginales = [];
 
 fetch("https://script.google.com/macros/s/AKfycbzUZMCwDFyd4Wv3qJbYY1HU4OvoKtGpXGgkbWAOBEI37EDKLZWNwlMS4s3Y0-zZhkTR/exec")
-.then(res => res.json())
+.then(res => {
+  if (!res.ok) throw new Error("Error en la red: " + res.statusText);
+  return res.json();
+})
 .then(data => {
 datosOriginales = data;
 cargarCategorias(data); // Primero cargamos categorías para poder seleccionar la correcta del hash
